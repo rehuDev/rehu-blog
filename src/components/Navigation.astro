@@ -1,0 +1,75 @@
+<nav>
+	<div class="nav-container">
+		<ul>
+			<li><a href="/category">갤러리</a></li>
+			<li><a href="/mcategory">마이너갤</a></li>
+			<li><a href="/micategory">미니갤</a></li>
+			<li><a href="/prcategory">인물갤</a></li>
+		</ul>
+		<span class="dummy-text">총 2,611,613개 게시글 등록</span>
+	</div>
+</nav>
+
+<style>
+	nav {
+		background-color: var(--dc-blue-3);
+	}
+	.nav-container {
+		display: flex;
+		align-items: center;
+		height: 38px;
+		max-width: 1300px;
+		margin: 0 auto;
+	}
+
+	nav ul {
+		display: flex;
+		justify-content: space-between;
+		height: 100%;
+		width: 100%;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	
+	nav ul a {
+		display: flex;
+		align-items: center;
+		height: 100%;
+		padding: 0 10px;
+		color: #fff;
+		font-weight: 700;
+		text-decoration: none;
+	}
+
+	nav ul a:hover {
+		color: #ff0;
+		text-decoration: underline;
+	}
+
+	.dummy-text {
+		display: none;
+	}
+
+	@media (min-width: 576px) {
+		.nav-container {
+			justify-content: space-between;
+		}
+
+		nav ul {
+			max-width: 20rem;
+		}
+
+		.dummy-text {
+			display: block;
+			color: rgba(255, 255, 255, 0.7);
+			padding: 0 10px;
+		}
+	}
+
+	@media (min-width: 768px) {
+		.nav-container {
+			height: 44px;
+		}
+	}
+</style>

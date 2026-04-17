@@ -1,0 +1,23 @@
+:root { 
+  --dc-blue-1: #1d2761;
+  --dc-blue-2: #29367c;
+  --dc-blue-3: #3b4890;
+}
+
+*,*::before,*::after {
+  box-sizing: border-box;
+}
+
+article,aside,figcaption,figure,footer,header,hgroup,main,nav,section {
+  display: block;
+}
+
+body {
+  /* margin: 0; */
+  font-family: -apple-system,BlinkMacSystemFont,NanumBarunGothicOTF,NanumBarunGothic,system-ui,sans-serif;
+	font-size: 1rem;
+	font-weight: 400;
+	line-height: 1.5;
+	text-align: left;
+	min-width: 20rem;
+}
