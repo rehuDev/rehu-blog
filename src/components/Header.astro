@@ -1,0 +1,228 @@
+---
+import Navigation from "./Navigation.astro";
+import TitleSVG from "../../public/brand-title.svg";
+---
+
+<header>
+	<div class="header-container">
+		<a class="header-brand" href="/" title="레후 블로그">
+			<img class="header-brand-logo" src="/brand-logo.png" alt="logo" />
+			<TitleSVG class="header-brand-title" fill="currentColor" />
+		</a>
+		<div class="header-search">
+			<button class="header-search-menu">
+				<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5"/></svg>
+			</button>
+			<search>
+				<form method="get" action="/search">
+					<input 
+						type="text"
+						autocomplete="off"
+						placeholder="블로그 통합검색"
+						value=""
+					/>
+					<button type="submit">
+						<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.796 15.811 21 21m-3-10.5a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0"/></svg>
+					</button>
+				</form>
+			</search>
+			<button class="header-search-resentgall">최근 방문</button>
+		</div>
+		<ul class="header-menu">
+			<li><span class="header-menu-nightmode">🌙야간모드</span></li>
+			<li><button class="header-menu-btn">메뉴</button></li>
+		</ul>
+	</div>
+	<Navigation />
+</header>
+
+<style>
+	header {
+		background-color: var(--dc-blue-2);
+	}
+	.header-container {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		height: 52px;
+		max-width: 1300px;
+		margin: 0 auto;
+	}
+
+	/* 브랜드 */
+	.header-brand {
+		display: flex;
+		align-items: center;
+		height: 100%;
+		padding: 8px 4px;
+	}
+	.header-brand-logo {
+		height: 100%;
+	}
+	.header-brand-title {
+		display: none;
+	}
+
+	/* 검색창 */
+	.header-search {
+		display: flex;
+		align-items: center;
+		height: 36px;
+		width: 100%;
+		margin: 8px 8px 8px 0;
+		background: #fff;
+		border: 1px solid var(--dc-blue-1);
+	}
+	.header-search button {
+		padding: 0;
+		border: 0 none;
+		background: transparent;
+		cursor: pointer;
+	}
+
+	.header-search search {
+		height: 100%;
+		width: 100%;
+	}
+	.header-search form {
+		display: flex;
+		height: 100%;
+	}
+	.header-search form input {
+		width: 100%;
+		padding: 0 6px;
+		border: none;
+		outline: none;
+		font-size: .875rem;
+		letter-spacing: -1px;
+	}
+	.header-search form button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+		color: var(--dc-blue-3);
+		width: 30px;
+		flex-shrink: 0;
+	}
+
+	.header-search-menu {
+		display: flex;
+    align-items: center;
+    justify-content: center;
+		height: 100%;
+		width: 34px;
+		border-right: 1px solid #e1e3ef !important;
+		color: rgba(0, 0, 0, 0.4);
+		flex-shrink: 0;
+	}
+
+	.header-search-resentgall {
+		display: flex;
+    align-items: center;
+    justify-content: center;
+		padding: 0 6px !important;
+		height: 100%;
+		color: #555;
+		font-weight: bold;
+		font-size: .875rem;
+		letter-spacing: -1px;
+		white-space: nowrap;
+		position: relative;
+	}
+	.header-search-resentgall::before {
+		content: "";
+		position: absolute;
+		left: 0;
+		top: 50%;
+		transform: translateY(-50%);
+		width: 1px;
+		height: 1.25rem;
+		background-color: #e1e3ef;
+	}
+
+	/* 우측 메뉴 */
+	.header-menu {
+		display: none;
+	}
+
+	/* 반응형 */
+	@media (min-width: 425px) {
+		.header-brand {
+			margin-right: 4px;
+		}
+		.header-brand-title {
+			display: block;	
+			height: 50%;
+			color: #fff;
+		}
+	}
+
+	@media (min-width: 768px) {
+		header {
+			background-color: #fff;
+		}
+		.header-container {
+			display: grid;
+			grid-template-columns: 1fr minmax(280px, 420px) 1fr;
+			height: 80px;
+		}
+
+		.header-brand {
+			justify-self: start;
+			margin-right: 8px;
+		}
+		.header-brand-logo {
+			height: 48px;
+		}
+		.header-brand-title {
+			color: #000;
+			height: 35%;
+		}
+
+		.header-search {
+			height: 46px;
+			margin: auto 0;
+			border: 4px solid var(--dc-blue-3);
+		}
+		.header-search form input {
+			padding: 0 8px;
+		}
+		.header-search form button {
+			background-color: var(--dc-blue-3) !important;
+			color: #fff;
+			width: 40px;
+			padding-left: 4px;
+		}
+		.header-search form button svg {
+			height: 28px;
+			width: 28px;
+		}
+		.header-search form button svg path {
+			stroke-width: 2.5;
+		}
+
+		.header-search-menu,
+		.header-search-resentgall {
+			display: none;
+		}
+
+		.header-menu {
+			justify-self: end;
+			align-self: flex-start;
+			display: flex;
+			margin: 12px 4px;
+			padding: 0;
+			gap: .5rem;
+			font-size: .875rem;
+			white-space: nowrap;
+			list-style: none;
+		}
+		.header-menu-btn {
+			padding: 0 4px;
+			background-color: var(--dc-blue-3);
+			border: 1px solid var(--dc-blue-2);
+			color: #fff;
+			text-shadow: 0px -1px var(--dc-blue-1);
+		}
+	}
+</style>
