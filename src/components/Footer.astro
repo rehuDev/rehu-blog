@@ -1,0 +1,113 @@
+<footer>
+	<div class="footer-top">
+		<nav>
+			<ul>
+				<li><a href="/category">갤러리</a></li>
+				<li><a href="/mcategory">마이너갤</a></li>
+				<li><a href="/micategory">미니갤</a></li>
+				<li><a href="/prcategory">인물갤</a></li>
+				<li><a href="/about">소개</a></li>
+			</ul>
+		</nav>
+	</div>
+	<div class="footer-btm">
+		<ul>
+			<li><button>야간 모드</button></li>
+			<li><button>맨위로 ▲</button></li>
+		</ul>
+		<p class="copyright">ⓒ 이 저작물은 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.ko" target="_blank">CC BY-SA 4.0</a>에 따라 이용할 수 있습니다. <span>(단, 일부 문서 및 삽화 제외)</span></p>
+	</div>
+</footer>
+
+<style>
+	.footer-top {
+		background-color: var(--dc-blue-3);
+	}
+	.footer-btm {
+		background-color: var(--dc-blue-2);
+		padding: 14px 0;
+	}
+
+	/* 상단 내비게이션 */
+	.footer-top nav {
+		height: 32px;
+	}
+	.footer-top nav ul {
+		display: flex;
+		justify-content: center;
+		height: 100%;
+		padding: 0;
+		margin: 0;
+		list-style: none;
+	}
+	.footer-top nav li {
+		display: flex;
+		align-items: center;
+	}
+	.footer-top nav ul a {
+		padding: 0 8px;
+		font-size: 12px;
+		line-height: 32px;
+		color: #ebecf0;
+		text-decoration: none;
+	}
+	/* 마지막 아이템을 제외한 모든 li 뒤에 선 추가 */
+	.footer-top nav li:not(:last-child)::after {
+		content: "";
+		width: 1px;
+		height: 10px;
+		background-color: var(--dc-blue-1);
+	}
+
+	/* 하단 저작권 표기 등 */
+	.footer-btm ul {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 0;
+		margin: 0 0 8px 0;
+		gap: 10px;
+		list-style: none;
+	}
+	.footer-btm ul button {
+		display: flex;
+		align-items: center;
+		padding: 0 16px;
+		font-size: .85rem;
+		color: #c4cae9;
+		border: 1px solid var(--dc-blue-1);
+		border-radius: 10px;
+		background: transparent;
+	}
+
+	.copyright {
+		text-align: center;
+		font-size: .75rem;
+		color: rgba(255, 255, 255, .5);
+		margin: 0;
+	}
+	.copyright a {
+		color: rgba(255, 255, 0, .5);
+	}
+	.copyright span {
+		white-space: nowrap;
+	}
+
+	@media (min-width: 768px) {
+		.footer-top {
+			display: none;
+		}
+		.footer-btm {
+			background-color: #fff;
+		}
+		.footer-btm ul {
+			display: none;
+		}
+		.copyright {
+			color: #333;
+		}
+		.copyright a {
+			color: rgba(0, 0, 255, .5);
+		}
+	}
+</style>
