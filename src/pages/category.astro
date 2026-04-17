@@ -1,21 +1,7 @@
 ---
-import Navigation from "../components/Navigation.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 
-<html lang="ko">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		헤더
-		<Navigation />
-		<h1>카테고리</h1>
-		<p>본문 내용</p>
-		푸터
-	</body>
-</html>
+<BaseLayout title="갤러리 - 레후 블로그">
+	<p>갤러리 카테고리 내용</p>
+</BaseLayout>
