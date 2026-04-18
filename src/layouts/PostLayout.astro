@@ -1,0 +1,12 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+const { frontmatter } = Astro.props;
+---
+<BaseLayout title={frontmatter.title}>
+	<h1>{frontmatter.title}</h1>
+	<p>{frontmatter.pubDate.toString().slice(0,10)}</p>
+	<p><em>{frontmatter.description}</em></p>
+	<p>{frontmatter.categories} 갤러리</p>
+	<img src={frontmatter.image} width="300" alt="섬네일 이미지" />
+	<slot />
+</BaseLayout>

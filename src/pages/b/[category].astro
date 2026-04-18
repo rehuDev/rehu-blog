@@ -1,0 +1,24 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+export async function getStaticPaths() {
+  const allPosts = Object.values(import.meta.glob("../posts/*.md", {eager: true}));
+  
+  return [
+    { params: { category: "Dev"}, props: {posts: allPosts} },	
+    { params: { category: "Health" }, props: {posts: allPosts} },	
+    { params: { category: "IT" }, props: {posts: allPosts} },	
+  ];
+}
+
+const { category } = Astro.params;
+const { posts } = Astro.props;
+const filteredPosts = posts.filter((post: any) => post.frontmatter.categories?.includes(category));
+---
+
+<BaseLayout title={`${category} 갤러리 - 레후 블로그`}>
+  <p>Posts category is {category}</p>
+  <ul>
+    {filteredPosts.map((post: any) => <li><a href={post.url}>{post.frontmatter.title}</a></li>)}
+  </ul>
+</BaseLayout>
