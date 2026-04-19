@@ -1,0 +1,178 @@
+---
+import Social from "../components/Social.astro";
+
+import { getCollection } from "astro:content";
+// blog 컬렉션의 모든 게시글 가져오기
+const allPosts = await getCollection("blog");
+// 날짜 내림차순 정렬, 상위 2개만 추출
+const recentPosts = allPosts
+  .sort((a, b) => b.data.updDate.valueOf() - a.data.updDate.valueOf())
+  .slice(0, 2);
+const recentPosts2 = allPosts
+  .sort((a, b) => b.data.updDate.valueOf() - a.data.updDate.valueOf())
+  .slice(2, 7);
+---
+
+<div class="sidebar-about">
+  <div class="info">
+    <a class="info-name" href="/about" title="레후 갤로그로 이동합니다.">
+      <span><strong>레후</strong>님</span>
+      <img src="/galler-con.gif" />
+      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" stroke="currentColor" stroke-width="2" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708" /></svg>
+    </a>
+    <a class="info-btn" href="/about" title="레후 갤로그로 이동합니다.">소개</a>
+  </div>
+  <div class="social">
+    <Social />
+  </div>
+</div>
+
+<div class="sidebar-item">
+  <div class="sidebar-item-header">
+    <a href="/all">최근 게시글</a>
+  </div>
+  <div class="sidebar-item-img">
+    {recentPosts.map((post) => (
+      <a href={`/posts/${post.data.slug}`} class="post-card">
+        <div class="image-wrapper">
+          <img 
+            src={post.data.image}
+            alt={post.data.title}            
+          />
+        </div>
+        <p class="title ellipsis-2">{post.data.title}</p>
+      </a>
+    ))}
+  </div>
+  <div class="sidebar-item-txt">
+    {recentPosts2.map((post) => (
+      <ul>
+        <li><a href={`/posts/${post.data.slug}`} class="post-card">{post.data.title}</a></li>
+      </ul>
+    ))}
+  </div>
+</div>
+
+<div class="sidebar-item">
+  <div class="sidebar-item-header">
+    <a href="/random">랜덤 게시글</a>
+  </div>
+</div>
+
+<div class="sidebar-item">
+  명언
+</div>
+
+<div class="sticky-container">
+  광고
+</div>
+
+<div>
+  뉴스 위젯
+</div>
+
+<style>
+  .sidebar-about {
+    margin-bottom: .75rem;
+    border: 1px solid var(--dc-blue-2);
+  }
+
+  .info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1rem;
+    height: 43px;
+  }
+
+  .info-name {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 1px;
+    color: var(--dc-blue-2);
+    text-decoration: none;
+  }
+  .info-name img {
+    margin-left: 2px;
+  }
+  .info-name svg path {
+    stroke: currentColor;
+    stroke-width: 2px;
+  }
+  .info-btn {
+    padding: 0 6px;
+    border: 1px solid var(--dc-blue-2);
+    background-color: var(--dc-blue-3);
+    color: #fff;
+    font-weight: 700;
+    text-shadow: 0px 1px var(--dc-blue-1);
+    text-decoration: none;
+  }
+  .social {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 1rem;
+    height: 36px;
+    background-color: #f3f3f3;
+  }
+
+  .sidebar-item {
+    padding: 0 1rem;
+    margin-bottom: .75rem;
+    border: 1px solid #ccc;
+  }
+  .sidebar-item-header {
+    height: 44px;
+    line-height: 47px;
+    padding-left: 2px;
+    border-bottom: 1px dashed #aaa;
+    overflow: hidden;
+  }
+  .sidebar-item-header a {
+    color: #333;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  /* 최근 게시글 */
+  .sidebar-item-img {
+    display: flex;
+    gap: .5rem;
+
+    margin-top: 12px;
+    overflow: hidden;
+  }
+  .post-card {
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s ease;
+  }
+  .post-card:hover {
+    transform: translateY(-4px);
+  }
+  .image-wrapper {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+  }
+  .image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .title {
+    margin: 0;
+    font-size: .75rem;
+    /* 두 줄 말줄임 */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+</style>

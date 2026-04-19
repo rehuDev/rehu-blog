@@ -1,16 +1,16 @@
 ---
-
+import Sidebar from "./Sidebar.astro";
 ---
 
 <div class="content-wrapper">
   <div class="left-ad-area">
-    <img src="../../public/광고판 eg.png" width="100%" height="100%" />
+    <img src="/광고판 eg.png" width="100%" height="100%" />
   </div>
   <article>
     <slot />
   </article>
   <aside>
-
+    <Sidebar />
   </aside>
 </div>
 
@@ -57,7 +57,7 @@
 
   @media (min-width: 1000px) {
     .content-wrapper {
-      grid-template-columns: 1fr calc(250px + .75rem);
+      grid-template-columns: 1fr calc(300px + .75rem);
     }
   }
 
