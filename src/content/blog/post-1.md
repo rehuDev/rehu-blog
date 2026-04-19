@@ -1,6 +1,6 @@
 ---
-layout: ../../layouts/PostLayout.astro
 title: "개인 블로그 프로젝트"
+slug: "personal-blog-project"
 description: "맨땅부터 시작하는 나만의 블로그 만들기, 그 여정"
 image: "https://docs.astro.build/assets/arc.webp"
 pubDate: 2026-04-15T21:35

@@ -1,4 +1,7 @@
 ---
+import { getCollection } from "astro:content";
+const allPosts2 = await getCollection("blog");
+
 import BaseLayout from "../layouts/BaseLayout.astro";
 const allPosts = Object.values(import.meta.glob("./posts/*.md", { eager: true }));
 ---
@@ -7,5 +10,12 @@ const allPosts = Object.values(import.meta.glob("./posts/*.md", { eager: true })
 	<p>홈 화면.</p>
 	<ul>
 		{allPosts.map((post: any) => <li><a href={post.url}>{post.frontmatter.title}</a></li>)}
+	</ul>
+	<ul>
+		{
+			allPosts2.map((post) => (
+				<li><a href={`/posts/${post.id}/`}>{post.data.title}</a></li>
+			))
+		}
 	</ul>
 </BaseLayout>

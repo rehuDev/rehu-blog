@@ -1,6 +1,6 @@
 ---
-layout: ../../layouts/PostLayout.astro
 title: "셀프호스팅 서버 HW 구성하기"
+slug: "built-selfhosting-server-hw"
 description: "서버 HW 구성 알아보기"
 image: "https://docs.astro.build/assets/rose.webp"
 pubDate: 2026-04-15T22:35

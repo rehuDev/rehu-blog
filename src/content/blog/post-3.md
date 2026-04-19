@@ -1,6 +1,6 @@
 ---
-layout: ../../layouts/PostLayout.astro
 title: "헬스; 근력운동 입문"
+slug: "health-ipmoon"
 description: "왕초보 헬스 기록지"
 image: "https://docs.astro.build/assets/rose.webp"
 pubDate: 2026-04-16T22:35

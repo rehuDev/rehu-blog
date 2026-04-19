@@ -1,0 +1,33 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+const allPosts = Object.values(import.meta.glob('../posts/*.md', {eager:true}));
+const categories = [...new Set(allPosts.map((post: any) => post.frontmatter.categories).flat())];
+---
+<BaseLayout title="갤러리 - 레후 블로그">
+  <p>주제별로 게시글을 살펴볼 수 있습니다.</p>
+  <div class="categories">
+    {categories.map((category) => (
+      <p class="category"><a href={`/g/${category}`}>{category}</a></p>
+    ))}
+  </div>
+</BaseLayout>
+
+<style>
+  a {
+    color: #00539F;
+  }
+
+  .categories {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .category {
+    margin: .25em;
+    border: dotted 1px #a1a1a1;
+    border-radius: .5em;
+    padding: .5em 1em;
+    font-size: 1.15em;
+    background-color: #F8FCFD;
+  }
+</style>

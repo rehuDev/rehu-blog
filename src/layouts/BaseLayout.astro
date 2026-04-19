@@ -33,11 +33,20 @@ const {
 	</head>
 	<body>
 		<Header />
-		<Content />
-		<slot />
-		<Social platform="twitter" username="rehu" />
-		<Social platform="dcinside" username="레후" />
-		<Social platform="youtube" username="rehuchan" />
+		<Content>
+			<slot />
+			<Social platform="twitter" username="rehu" />
+			<Social platform="dcinside" username="레후" />
+			<Social platform="youtube" username="rehuchan" />
+		</Content>
 		{showFooter && <Footer />}
 	</body>
 </html>
+
+<style>
+	body {	
+		display: flex;
+		flex-direction: column;
+		min-height: 100dvh;
+	}
+</style>
