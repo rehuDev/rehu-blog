@@ -2,6 +2,10 @@
 import { getCollection } from "astro:content";
 const allPosts = await getCollection("blog");
 const postCount = allPosts.length;
+const totalCharacters = allPosts.reduce((acc, post) => {
+	const pureTextCount = post.body?.replace(/\s+/g, '').length ?? 0;
+	return acc + pureTextCount;
+}, 0);
 ---
 
 <nav>
@@ -12,7 +16,10 @@ const postCount = allPosts.length;
 			<li><a href="/mi" title="창작물 포트폴리오">미니갤</a></li>
 			<li><a href="/pr" title="레후의 삶">인물갤</a></li>
 		</ul>
-		<span class="extra-info">총 <span class="em">{postCount.toLocaleString()}개</span> 게시글 등록</span>
+		<div class="extra-info">
+			<span class="ticker-item item-1">총 <span class="em">{postCount.toLocaleString()}개</span> 게시글 등록</span>
+			<span class="ticker-item item-2">총 문자 <span class="em2">{totalCharacters.toLocaleString()}자</span> 작성</span>
+		</div>
 	</div>
 </nav>
 
@@ -68,8 +75,11 @@ const postCount = allPosts.length;
 		nav ul {
 			max-width: clamp(250px, 32rem, 400px);
 		}
+		
 		.extra-info {
-			display: block;
+			display: grid;
+			align-items: center;
+			text-align: end;
 			padding: 0 10px;
 			color: rgba(255, 255, 255, 0.7);
 			font-size: clamp(12px, 1.5rem, 18px);
@@ -77,6 +87,35 @@ const postCount = allPosts.length;
 		}
 		.extra-info .em {
 			color: #ffff99;
+		}
+		.extra-info .em2 {
+			color: #ffbbee;
+		}
+		
+		.ticker-item {
+			grid-area: 1 / 1;
+			animation: fadeTicker 10s infinite;
+		}
+		.ticker-item.item-1 {
+			animation-delay: 0s;
+		}
+		.ticker-item.item-2 {
+			animation-delay: -5s;
+		}
+		@keyframes fadeTicker {
+			0%, 45% {
+				opacity: 1;
+				visibility: visible;
+			}
+			/* 45~50% 구간(0.5s) 동안 자연스럽게 페이드아웃 교체. 화면에서 숨겨 클릭 방지. */
+			50%, 95% {
+				opacity: 0;
+				visibility: hidden;
+			}
+			100% {
+				opacity: 1;
+				visibility: visible;
+			}
 		}
 	}
 
