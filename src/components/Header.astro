@@ -44,8 +44,8 @@ import TitleSVG from "../../public/brand-title.svg";
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		height: 52px;
-		max-width: 1300px;
+		height: clamp(36px, 5.2rem, 62px);
+		max-width: var(--layout-max-width);
 		margin: 0 auto;
 	}
 
@@ -67,7 +67,7 @@ import TitleSVG from "../../public/brand-title.svg";
 	.header-search {
 		display: flex;
 		align-items: center;
-		height: 36px;
+		height: clamp(32px, 3.6rem, 44px);
 		width: 100%;
 		margin: 8px 8px 8px 0;
 		background: #fff;
@@ -93,7 +93,7 @@ import TitleSVG from "../../public/brand-title.svg";
 		padding: 0 6px;
 		border: none;
 		outline: none;
-		font-size: .875rem;
+		font-size: clamp(11px, 1.3rem, 16px);
 		letter-spacing: -1px;
 	}
 	.header-search form button {
@@ -124,7 +124,7 @@ import TitleSVG from "../../public/brand-title.svg";
 		height: 100%;
 		color: #555;
 		font-weight: bold;
-		font-size: .875rem;
+		font-size: clamp(10px, 1.3rem, 16px);
 		letter-spacing: -1px;
 		white-space: nowrap;
 		position: relative;
@@ -213,7 +213,7 @@ import TitleSVG from "../../public/brand-title.svg";
 			margin: 12px 4px;
 			padding: 0;
 			gap: .5rem;
-			font-size: .875rem;
+			font-size: 1.1rem;
 			white-space: nowrap;
 			list-style: none;
 		}

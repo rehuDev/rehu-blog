@@ -2,15 +2,21 @@
 import Social from "../components/Social.astro";
 
 import { getCollection } from "astro:content";
-// blog 컬렉션의 모든 게시글 가져오기
+// blog 컬렉션의 모든 게시글 가져오기, 날짜 내림차순 정렬
 const allPosts = await getCollection("blog");
-// 날짜 내림차순 정렬, 상위 2개만 추출
-const recentPosts = allPosts
-  .sort((a, b) => b.data.updDate.valueOf() - a.data.updDate.valueOf())
-  .slice(0, 2);
-const recentPosts2 = allPosts
-  .sort((a, b) => b.data.updDate.valueOf() - a.data.updDate.valueOf())
-  .slice(2, 7);
+const sortedPosts = allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+// 서버 단에서 미리 페이지 단위(7개씩)로 배열 쪼개놓기
+const POSTS_PER_PAGE = 7;
+const MAX_PAGES = 4;
+const MAX_POSTS = POSTS_PER_PAGE * MAX_PAGES; // 28
+// 전체 게시글 중 56개만 잘라냄
+const limitedPosts = sortedPosts.slice(0, MAX_POSTS);
+const pagesChunks = [];
+// 잘라낸 배열 기준으로 청크 나눔
+for (let i = 0; i < limitedPosts.length; i += POSTS_PER_PAGE) {
+  pagesChunks.push(limitedPosts.slice(i, i + POSTS_PER_PAGE));
+}
 ---
 
 <div class="sidebar-about">
@@ -31,25 +37,43 @@ const recentPosts2 = allPosts
   <div class="sidebar-item-header">
     <a href="/all">최근 게시글</a>
   </div>
-  <div class="sidebar-item-img">
-    {recentPosts.map((post) => (
-      <a href={`/posts/${post.data.slug}`} class="post-card">
-        <div class="image-wrapper">
-          <img 
-            src={post.data.image}
-            alt={post.data.title}            
-          />
+  <div class="sidebar-item-recent">
+    {pagesChunks.map((chunk, pageIndex) => {
+      const imagePosts = chunk.slice(0, 2);
+      const listPosts = chunk.slice(2, 7);
+
+      return (
+        <div class={`page-group ${pageIndex === 0 ? "active" : ""}`} data-page={pageIndex + 1}>
+
+          <div class="image-posts-group">
+            {imagePosts.map(post => (
+              <a href={`/posts/${post.data.slug}`} class="image-card">
+                <div class="image-wrapper">
+                  <img 
+                    src={post.data.image} 
+                    alt={post.data.title} 
+                  />
+                </div>
+                <h4>{post.data.title}</h4>
+              </a>
+            ))}
+          </div>
+          
+          <ul class="lists-posts-group">
+            {listPosts.map(post => (
+              <li>
+                <a href={`/posts/${post.data.slug}`}>{post.data.title}</a>
+              </li>
+            ))}
+          </ul>
         </div>
-        <p class="title ellipsis-2">{post.data.title}</p>
-      </a>
-    ))}
+      );
+    })}
   </div>
-  <div class="sidebar-item-txt">
-    {recentPosts2.map((post) => (
-      <ul>
-        <li><a href={`/posts/${post.data.slug}`} class="post-card">{post.data.title}</a></li>
-      </ul>
-    ))}
+
+  <div class="pagination-controls" data-total-pages={pagesChunks.length}>
+    <button id="prev-btn" disabled>이전</button>
+    <button id="next-btn">다음</button>
   </div>
 </div>
 
@@ -137,14 +161,21 @@ const recentPosts2 = allPosts
   }
 
   /* 최근 게시글 */
-  .sidebar-item-img {
+  .page-group {
+    display: none;
+  }
+  .page-group.active {
+    display: block;
+  }
+
+  .image-posts-group {
     display: flex;
     gap: .5rem;
 
     margin-top: 12px;
     overflow: hidden;
   }
-  .post-card {
+  .image-card {
     display: flex;
     flex-direction: column;
     gap: .5rem;
@@ -152,7 +183,7 @@ const recentPosts2 = allPosts
     color: inherit;
     transition: transform 0.2s ease;
   }
-  .post-card:hover {
+  .image-card:hover {
     transform: translateY(-4px);
   }
   .image-wrapper {
@@ -160,12 +191,12 @@ const recentPosts2 = allPosts
     aspect-ratio: 16 / 9;
     overflow: hidden;
   }
-  .image-wrapper img {
+  .image-card img {
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
-  .title {
+  .image-card h4 {
     margin: 0;
     font-size: .75rem;
     /* 두 줄 말줄임 */
@@ -174,5 +205,14 @@ const recentPosts2 = allPosts
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+  .lists-posts-group {
+    list-style: none;
+    padding: 0;
+    margin: 12px 0;
+  }
+  .lists-posts-group li a {
+    text-decoration: none;
+    color: #333;
   }
 </style>

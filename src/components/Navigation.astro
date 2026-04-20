@@ -1,12 +1,18 @@
+---
+import { getCollection } from "astro:content";
+const allPosts = await getCollection("blog");
+const postCount = allPosts.length;
+---
+
 <nav>
 	<div class="nav-container">
 		<ul>
-			<li><a href="/g">갤러리</a></li>
-			<li><a href="/m">마이너갤</a></li>
-			<li><a href="/mi">미니갤</a></li>
-			<li><a href="/pr">인물갤</a></li>
+			<li><a href="/g" title="갤러리 카테고리">갤러리</a></li>
+			<li><a href="/m" title="마이너 카테고리">마이너갤</a></li>
+			<li><a href="/mi" title="창작물 포트폴리오">미니갤</a></li>
+			<li><a href="/pr" title="레후의 삶">인물갤</a></li>
 		</ul>
-		<span class="dummy-text">총 2,611,613개 게시글 등록</span>
+		<span class="extra-info">총 <span class="em">{postCount.toLocaleString()}개</span> 게시글 등록</span>
 	</div>
 </nav>
 
@@ -17,9 +23,10 @@
 	.nav-container {
 		display: flex;
 		align-items: center;
-		height: 38px;
-		max-width: 1300px;
+		height: clamp(34px, 3.8rem, 46px);
+		max-width: var(--layout-max-width);
 		margin: 0 auto;
+		overflow: hidden;
 	}
 
 	nav ul {
@@ -37,16 +44,20 @@
 		height: 100%;
 		padding: 0 10px;
 		color: #fff;
+		font-size: clamp(13px, 1.5rem, 18px);
 		font-weight: 700;
+		line-height: 1;
+		letter-spacing: -1px;
+		white-space: nowrap;
 		text-decoration: none;
 	}
 	nav ul a:hover, 
 	nav ul a:focus {
-		color: #ff0;
+		color: #FFED44;
 		text-decoration: underline;
 	}
 
-	.dummy-text {
+	.extra-info {
 		display: none;
 	}
 
@@ -55,18 +66,23 @@
 			justify-content: space-between;
 		}
 		nav ul {
-			max-width: 20rem;
+			max-width: clamp(250px, 32rem, 400px);
 		}
-		.dummy-text {
+		.extra-info {
 			display: block;
-			color: rgba(255, 255, 255, 0.7);
 			padding: 0 10px;
+			color: rgba(255, 255, 255, 0.7);
+			font-size: clamp(12px, 1.5rem, 18px);
+			white-space: nowrap;
+		}
+		.extra-info .em {
+			color: #ffff99;
 		}
 	}
 
 	@media (min-width: 768px) {
 		.nav-container {
-			height: 42px;
+			height: clamp(36px, 4.2rem, 50px);
 		}
 	}
 </style>

@@ -3,7 +3,7 @@ title: "셀프호스팅 입문"
 slug: "selfhosting-gogo"
 description: "셀프호스팅 입문 임시"
 image: "https://docs.astro.build/assets/arc.webp"
-pubDate: 2026-04-15T21:35
+pubDate: 2026-04-15T21:36
 updDate: 2026-04-20T02:42
 categories:
   - "Dev"
