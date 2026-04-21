@@ -1,8 +1,9 @@
 ---
+import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 
 export async function getStaticPaths() {
-  const allPosts = Object.values(import.meta.glob("../posts/*.md", {eager: true}));
+  const allPosts = await getCollection("blog");
   
   return [
     { params: { category: "Dev"}, props: {posts: allPosts} },	
@@ -13,12 +14,17 @@ export async function getStaticPaths() {
 
 const { category } = Astro.params;
 const { posts } = Astro.props;
-const filteredPosts = posts.filter((post: any) => post.frontmatter.categories?.includes(category));
+
+const filteredPosts = posts.filter((post) => 
+  post.data.categories?.includes(category)
+);
 ---
 
 <BaseLayout title={`${category} 갤러리 - 레후 블로그`}>
   <p>Posts category is {category}</p>
   <ul>
-    {filteredPosts.map((post: any) => <li><a href={post.url}>{post.frontmatter.title}</a></li>)}
+    {filteredPosts.map((post) => (
+      <li><a href={`/posts/${post.data.slug}`}>{post.data.title}</a></li>
+    ))}
   </ul>
 </BaseLayout>

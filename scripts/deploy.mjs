@@ -153,7 +153,10 @@ async function prepareBundle(config) {
 async function main() {
   const config = await loadDeployConfig();
 
-  console.log('\n[1/4] Building Astro site...');
+  console.log('\n[1/4] Cleaning dist folder and building Astro site...');
+
+  await rm(path.join(rootDir, 'dist'), { recursive: true, force: true });
+
   await runCommand(astroCommand, ['build'], {
     env: {
       ...process.env,

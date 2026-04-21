@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "if exist dist rmdir /s /q dist && astro build",
     "preview": "astro preview",
     "astro": "astro",
     "deploy": "node ./scripts/deploy.mjs"
