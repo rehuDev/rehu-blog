@@ -1,33 +1,151 @@
 ---
+import { getCollection } from "astro:content";
+import { getGalleryMeta } from "../../data/galleries";
 import BaseLayout from "../../layouts/BaseLayout.astro";
-const allPosts = Object.values(import.meta.glob('../posts/*.md', {eager:true}));
-const categories = [...new Set(allPosts.map((post: any) => post.frontmatter.categories).flat())];
+
+const allPosts = await getCollection("blog");
+
+const galleryEntries = [...new Set(allPosts.flatMap((post) => post.data.categories ?? []))]
+  .map((category) => {
+    const gallery = getGalleryMeta(category);
+    const posts = allPosts
+      .filter((post) => post.data.categories?.includes(category))
+      .sort((a, b) => b.data.updDate.valueOf() - a.data.updDate.valueOf());
+
+    return {
+      category,
+      gallery,
+      count: posts.length,
+      latestPost: posts[0],
+    };
+  })
+  .sort((a, b) => b.count - a.count || a.gallery.title.localeCompare(b.gallery.title, "ko"));
 ---
-<BaseLayout title="갤러리 - 레후 블로그">
-  <p>주제별로 게시글을 살펴볼 수 있습니다.</p>
-  <div class="categories">
-    {categories.map((category) => (
-      <p class="category"><a href={`/g/${category}`}>{category}</a></p>
-    ))}
-  </div>
+
+<BaseLayout title="갤러리 - 렇후 블로그">
+  <section class="gallery-list">
+    <header class="page-header">
+      <h1>갤러리</h1>
+      <p>카테고리별로 글을 모아볼 수 있습니다.</p>
+    </header>
+
+    <div class="gallery-grid">
+      {galleryEntries.map((entry) => (
+        <a
+          class="gallery-card"
+          href={`/g/${encodeURIComponent(entry.category)}`}
+          style={`--gallery-accent: ${entry.gallery.accentColor}`}
+          data-variant={entry.gallery.variant}
+        >
+          {entry.latestPost?.data.image && (
+            <div class="gallery-thumb">
+              <img src={entry.latestPost.data.image} alt={entry.gallery.title} loading="lazy" />
+            </div>
+          )}
+
+          <div class="gallery-body">
+            <div class="gallery-meta">
+              <strong>{entry.gallery.title}</strong>
+              <span>{entry.count}개 글</span>
+            </div>
+            <p>{entry.gallery.description}</p>
+            {entry.latestPost && <p class="latest-post">최근 글: {entry.latestPost.data.title}</p>}
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
 </BaseLayout>
 
 <style>
-  a {
-    color: #00539F;
+  .gallery-list {
+    display: grid;
+    gap: 2rem;
   }
 
-  .categories {
+  .page-header h1 {
+    margin: 0;
+    font-size: clamp(2.8rem, 4vw, 4rem);
+  }
+
+  .page-header p {
+    margin: 0.75rem 0 0;
+    color: #555;
+  }
+
+  .gallery-grid {
+    display: grid;
+    gap: 1.6rem;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  }
+
+  .gallery-card {
+    display: grid;
+    overflow: hidden;
+    border: 1px solid #d8dce8;
+    border-radius: 1.2rem;
+    background: #fff;
+    color: inherit;
+    text-decoration: none;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  }
+
+  .gallery-card:hover,
+  .gallery-card:focus-visible {
+    transform: translateY(-2px);
+    border-color: var(--gallery-accent);
+    box-shadow: 0 12px 28px rgba(30, 45, 90, 0.12);
+  }
+
+  .gallery-thumb {
+    aspect-ratio: 16 / 9;
+    background: linear-gradient(135deg, #eff3ff 0%, #f8fbff 100%);
+  }
+
+  .gallery-card[data-variant="health"] .gallery-thumb {
+    background: linear-gradient(135deg, #ecfdf3 0%, #f7fff9 100%);
+  }
+
+  .gallery-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .gallery-body {
+    display: grid;
+    gap: 0.8rem;
+    padding: 1.4rem;
+  }
+
+  .gallery-meta {
     display: flex;
-    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
   }
 
-  .category {
-    margin: .25em;
-    border: dotted 1px #a1a1a1;
-    border-radius: .5em;
-    padding: .5em 1em;
-    font-size: 1.15em;
-    background-color: #F8FCFD;
+  .gallery-meta strong {
+    color: var(--gallery-accent);
+    font-size: 1.8rem;
+  }
+
+  .gallery-meta span {
+    color: #667085;
+    font-size: 1.3rem;
+    white-space: nowrap;
+  }
+
+  .gallery-body p {
+    margin: 0;
+    color: #475467;
+    font-size: 1.4rem;
+  }
+
+  .latest-post {
+    color: #1f2937;
+    font-size: 1.35rem;
+    font-weight: 700;
   }
 </style>

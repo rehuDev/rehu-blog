@@ -1,30 +1,145 @@
 ---
 import { getCollection } from "astro:content";
+import { getGalleryMeta } from "../../data/galleries";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 
 export async function getStaticPaths() {
   const allPosts = await getCollection("blog");
-  
-  return [
-    { params: { category: "Dev"}, props: {posts: allPosts} },	
-    { params: { category: "Health" }, props: {posts: allPosts} },	
-    { params: { category: "IT" }, props: {posts: allPosts} },	
-  ];
+  const categories = [...new Set(allPosts.flatMap((post) => post.data.categories ?? []))];
+
+  return categories.map((category) => {
+    const gallery = getGalleryMeta(category);
+    const posts = allPosts
+      .filter((post) => post.data.categories?.includes(category))
+      .sort((a, b) => b.data.updDate.valueOf() - a.data.updDate.valueOf());
+
+    return {
+      params: { category },
+      props: { category, gallery, posts },
+    };
+  });
 }
 
-const { category } = Astro.params;
-const { posts } = Astro.props;
-
-const filteredPosts = posts.filter((post) => 
-  post.data.categories?.includes(category)
-);
+const { category, gallery, posts } = Astro.props;
 ---
 
-<BaseLayout title={`${category} 갤러리 - 레후 블로그`}>
-  <p>Posts category is {category}</p>
-  <ul>
-    {filteredPosts.map((post) => (
-      <li><a href={`/posts/${post.data.slug}`}>{post.data.title}</a></li>
-    ))}
-  </ul>
+<BaseLayout title={`${gallery.title} - 레후 블로그`}>
+  <section
+    class="category-page"
+    style={`--gallery-accent: ${gallery.accentColor}`}
+    data-variant={gallery.variant}
+  >
+    <header class="page-header">
+      <p class="eyebrow">갤러리</p>
+      <h1>{gallery.title}</h1>
+      <p>{gallery.description}</p>
+      <p class="post-count">{category} 카테고리의 글 {posts.length}개</p>
+    </header>
+
+    <div class="post-list">
+      {posts.map((post) => (
+        <a class="post-card" href={`/posts/${post.data.slug}`}>
+          <div class="post-body">
+            <h2>{post.data.title}</h2>
+            <p>{post.data.description}</p>
+          </div>
+          <time datetime={post.data.updDate.toISOString()}>
+            {post.data.updDate.toISOString().slice(0, 10)}
+          </time>
+        </a>
+      ))}
+    </div>
+  </section>
 </BaseLayout>
+
+<style>
+  .category-page {
+    display: grid;
+    gap: 2rem;
+  }
+
+  .page-header {
+    padding: 1.8rem;
+    border: 1px solid color-mix(in srgb, var(--gallery-accent), white 70%);
+    border-left: 0.6rem solid var(--gallery-accent);
+    border-radius: 1rem;
+    background: linear-gradient(135deg, color-mix(in srgb, var(--gallery-accent), white 92%), #fff);
+  }
+
+  .category-page[data-variant="health"] .page-header {
+    background: linear-gradient(135deg, #f1fbf5, #fff);
+  }
+
+  .eyebrow {
+    margin: 0;
+    color: var(--gallery-accent);
+    font-size: 1.3rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .page-header h1 {
+    margin: 0.4rem 0;
+    font-size: clamp(3rem, 4vw, 4.2rem);
+  }
+
+  .page-header p {
+    margin: 0;
+    color: #475467;
+  }
+
+  .post-count {
+    margin-top: 0.8rem;
+    color: #667085;
+    font-size: 1.3rem;
+  }
+
+  .post-list {
+    display: grid;
+    gap: 1.2rem;
+  }
+
+  .post-card {
+    display: flex;
+    justify-content: space-between;
+    gap: 1.6rem;
+    padding: 1.6rem;
+    border: 1px solid #dde3f0;
+    border-radius: 1.2rem;
+    background: #fff;
+    color: inherit;
+    text-decoration: none;
+    transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+  }
+
+  .post-card:hover,
+  .post-card:focus-visible {
+    transform: translateY(-2px);
+    border-color: var(--gallery-accent);
+    box-shadow: 0 10px 24px rgba(30, 45, 90, 0.1);
+  }
+
+  .post-body h2 {
+    margin: 0 0 0.6rem;
+    font-size: 2rem;
+    line-height: 1.35;
+  }
+
+  .post-body p {
+    margin: 0;
+    color: #475467;
+  }
+
+  .post-card time {
+    color: #667085;
+    font-size: 1.3rem;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 640px) {
+    .post-card {
+      flex-direction: column;
+    }
+  }
+</style>
