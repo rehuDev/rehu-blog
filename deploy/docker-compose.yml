@@ -1,0 +1,10 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: rehu-blog:latest
+    container_name: rehu-blog
+    restart: unless-stopped
+    ports:
+      - "${DEPLOY_BIND_PORT}:80"
