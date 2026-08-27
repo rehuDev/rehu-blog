@@ -1,0 +1,31 @@
+:root {
+  --dc-blue-1: #1d2761;
+  --dc-blue-2: #29367c;
+  --dc-blue-3: #3b4890;
+
+  --layout-max-width: 1200px;
+  --layout-min-width: 320px;
+
+  --font-regular: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+}
+
+*,*::before,*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 100%;
+}
+
+body {
+  margin: 0;
+  font-size: 1rem;
+  min-width: var(--layout-min-width);
+}
+
+h1 {
+  font-size: 2rem;
+}

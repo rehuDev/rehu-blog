@@ -1,0 +1,119 @@
+<nav>
+  <div class="nav-container">
+    <ul>
+      <li><a href="/g/" title="ギャラリーカテゴリ">ギャラリー</a></li>
+      <li><a href="/m/" title="マイナーカテゴリ">マイナー</a></li>
+      <li><a href="/li/" title="自分の世界">ライブラリ</a></li>
+      <li><a href="/cr/" title="何か作ったもの">創作</a></li>
+      <li><a href="/pr/" title="レフの一生">私</a></li>
+    </ul>
+    <div class="extra-info">
+      <span class="ticker-item item-1">計<span class="em1">12件</span>の投稿を登録</span>
+      <span class="ticker-item item-2">計<span class="em2">1,002文字</span>を作成</span>
+    </div>
+  </div>
+</nav>
+
+<style>
+  nav {
+    background-color: var(--dc-blue-3);
+  }
+  .nav-container {
+    display: flex;
+    align-items: center;
+    height: 38px;
+    max-width: var(--layout-max-width);
+    margin: 0 auto;
+    overflow: hidden;
+  }
+
+  nav ul {
+    display: flex;
+    justify-content: space-between;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  nav ul a {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 0 9px;
+    color: #fff;
+    font-size: 14px;
+    font-weight: var(--font-bold);
+    letter-spacing: -1px;
+    line-height: 1;
+    white-space: nowrap;
+    text-decoration: none;
+  }
+  nav ul a:hover,
+  nav ul a:focus {
+    color: #FFED44;
+    text-decoration: underline;
+  }
+
+  .extra-info {
+    display: none;
+  }
+
+  @media (min-width: 576px) {
+    .nav-container {
+      justify-content: space-between;
+    }
+    nav ul {
+      max-width: 320px;
+    }
+
+    .extra-info {
+      display: grid;
+      align-items: center;
+      text-align: end;
+      padding: 0 10px;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 15px;
+      white-space: nowrap;
+    }
+    .extra-info .em1 {
+      color: #ffff99;
+    }
+    .extra-info .em2 {
+      color: #ffbbee;
+    }
+
+    .ticker-item {
+      grid-area: 1 / 1;
+      animation: fadeTicker 20s infinite;
+    }
+    .ticker-item.item-1 {
+      animation-delay: 0s;
+    }
+    .ticker-item.item-2 {
+      animation-delay: -10s;
+    }
+    @keyframes fadeTicker {
+      0%, 45% {
+        opacity: 1;
+        visibility: visible;
+      }
+      /* 45% to 50%: fade out, click evade */
+      50%, 95% {
+        opacity: 0;
+        visibility: hidden;
+      }
+      100% {
+        opacity: 1;
+        visibility: visible;
+      }
+    }
+  }
+
+  @media (min-width: 768px) {
+    .nav-container {
+      height: 42px;
+    }
+  }
+
+</style>
