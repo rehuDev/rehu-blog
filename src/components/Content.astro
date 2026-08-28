@@ -1,0 +1,96 @@
+---
+import { Image } from "astro:assets"; 
+import Sidebar from './Sidebar.astro';
+import leftAd from '../assets/ads/left ad 1.png';
+---
+
+<div class="content-wrapper">
+  <div class="left-ad-area">
+    <a href="/" target="_blank" rel="sponsored noopener">
+      <Image src={leftAd} alt="テスト広告" loading="lazy" />
+    </a>
+    </div>
+  <article>
+    <slot />
+  </article>
+  <aside>
+    <Sidebar />
+  </aside>
+</div>
+
+<style>
+  .content-wrapper {
+    display: grid;
+    grid-template-columns: 1fr;
+    max-width: var(--layout-max-width);
+    margin: 0 auto;
+    width: 100%;
+    flex: 1;
+  }
+
+  .left-ad-area {
+    display: none;
+  }
+  aside {
+    display: none;
+  }
+
+  article {
+    padding: 10px 0 10px 10px;
+    margin: 0 10px 0 0;
+    overflow: hidden;
+  }
+
+  @media (min-width: 768px) {
+    .content-wrapper {
+      grid-template-columns: 1fr calc(200px + 10px);
+    }
+    
+    aside {
+      display: block;
+      padding: 10px 10px 10px 0;
+    }
+
+    /* article {
+      border-width: 0 1px 0 1px;
+      border-style: solid;
+      border-color: #bbb;
+    } */
+  }
+
+  @media (min-width: 992px) {
+    .content-wrapper {
+      grid-template-columns: 1fr calc(300px + 10px);
+    }
+  }
+
+  @media (min-width: 1700px) { 
+    .content-wrapper {
+      grid-template-columns: auto 1fr calc(300px + 10px);
+    }
+
+    .left-ad-area {
+      display: block;
+      align-self: start;
+      width: 160px;
+      height: 600px;
+      margin: 10px 0 0 -160px !important;
+      position: sticky;
+      top: 10px;
+      transform: translateX(-10px);
+    }
+    .left-ad-area a {
+      display: block;
+    }
+    .left-ad-area a:focus-visible {
+      outline: 3px solid var(--dc-blue-3);
+      outline-offset: 3px;
+    }
+    .left-ad-area img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+  }
+
+</style>
