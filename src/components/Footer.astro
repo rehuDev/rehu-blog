@@ -1,0 +1,120 @@
+<footer>
+  <div class="footer-top">
+    <nav>
+      <ul>
+        <li><a href="/g/">ギャラリー</a></li>
+        <li><a href="/m/">マイナー</a></li>
+        <li><a href="/li/">ライブラリ</a></li>
+        <li><a href="/cr/">創作</a></li>
+        <li><a href="/pr/">私</a></li>
+        <li><a href="/about/">ABOUT</a></li>
+      </ul>
+    </nav>
+  </div>
+  <div class="footer-btm">
+    <ul>
+      <li><button>夜間モード</button></li>
+      <li><button>トップへ戻る ▲</button></li>
+    </ul>
+    <p class="copyright">© rehu.blog. 特記のない本文・画像は <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.ja" target="_blank" rel="license noopener noreferrer">CC BY-SA 4.0</a>。<span>（第三者素材等を除く）</span></p>
+  </div>
+</footer>
+
+<style>
+  footer {
+    flex-shrink: 0;
+    margin-top: auto;
+  }
+  .footer-top {
+    background-color: var(--dc-blue-3);
+  }
+  .footer-btm {
+    background-color: var(--dc-blue-2);
+    padding: 14px 0;
+  }
+
+  /* Footer navigation */
+  .footer-top nav {
+    height: 32px;
+  }
+  .footer-top nav ul {
+    display: flex;
+    justify-content: center;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+  .footer-top nav ul li {
+    display: flex;
+    align-items: center;
+  }
+  .footer-top nav ul li a {
+    padding: 0 8px;
+    font-size: 12px;
+    line-height: 32px;
+    color: #ebecf0;
+    text-decoration: none;
+    white-space: nowrap;
+    letter-spacing: -1px;
+  }
+  /* Add a vertical line between the list items */
+  .footer-top nav li:not(:last-child)::after {
+    content: "";
+    width: 1px;
+    height: 10px;
+    background-color: var(--dc-blue-1);
+  }
+
+  /* Footer bottom (copyright and etc) */
+  .footer-btm ul {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin: 0 0 8px 0;
+    gap: 10px;
+    list-style: none;
+  }
+  .footer-btm ul button {
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    font-size: 12px;
+    color: #c4cae9;
+    border: 1px solid var(--dc-blue-1);
+    border-radius: 10px;
+    background: transparent;
+  }
+
+  .copyright {
+    text-align: center;
+    font-size: 11px;
+    color: rgba(255, 255, 255, .5);
+    margin: 0;
+  }
+  .copyright a {
+    color: rgba(255, 255, 0, .5);
+  }
+  .copyright span {
+    white-space: nowrap;
+  }
+
+  @media (min-width: 768px) {
+    .footer-top {
+      display: none;
+    }
+    .footer-btm {
+      background-color: #fff;
+    }
+    .footer-btm ul {
+      display: none;
+    }
+    .copyright {
+      color: #333;
+    }
+    .copyright a {
+      color: rgba(0, 0, 255, .5);
+    }
+  }
+</style>

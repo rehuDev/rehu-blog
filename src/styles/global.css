@@ -17,10 +17,15 @@
 }
 
 html {
+  min-height: 100%;
   font-size: 100%;
 }
 
 body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
   margin: 0;
   font-size: 1rem;
   min-width: var(--layout-min-width);
