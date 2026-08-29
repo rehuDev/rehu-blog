@@ -2,38 +2,87 @@
 import type { GetStaticPaths } from 'astro';
 import type { CollectionEntry } from 'astro:content';
 import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
 import BaseLayout from "../../layouts/BaseLayout.astro";
 
 export const getStaticPaths = (async () => {
-  const allPosts = await getCollection('post');
-  const categories = [
-    ...new Set(allPosts.flatMap((post) => post.data.categories)),
-  ];
+  const [allPosts, galleries] = await Promise.all([
+    getCollection('post'),
+    getCollection('gallery'),
+  ]);
 
-  return categories.map((category) => ({
-    params: { category: category.toLowerCase() },
+  return galleries.map((gallery) => ({
+    params: { category: gallery.id },
     props: {
-      category,
+      gallery,
       posts: allPosts
-        .filter((post) => post.data.categories.includes(category))
+        .filter((post) =>
+          post.data.categories.some((category) => category.id === gallery.id),
+        )
         .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime()),
     },
   }));
 }) satisfies GetStaticPaths;
 
 interface Props {
-  category: string;
+  gallery: CollectionEntry<'gallery'>;
   posts: CollectionEntry<'post'>[];
 }
 
-const { category, posts } = Astro.props;
+const { gallery, posts } = Astro.props;
+const { title, description, thumbnail, relatedSites } = gallery.data;
 ---
 
-<BaseLayout title={`${category} ギャラリー | rehu.blog`}>
-  <h1>{category} ギャラリー</h1>
+<BaseLayout title={`${title} ギャラリー | rehu.blog`} description={description}>
+  <header class="gallery-header">
+    <Image src={thumbnail} alt="" />
+    <div>
+      <h1>{title} ギャラリー</h1>
+      <p>{description}</p>
+    </div>
+  </header>
+
   <ul>
     {posts.map((post) => (
       <li><a href={`/posts/${post.id}/`}>{post.data.title}</a></li>
     ))}
   </ul>
+
+  {relatedSites.length > 0 && (
+    <section class="related-sites">
+      <h2>関連サイト</h2>
+      <ul>
+        {relatedSites.map((site) => (
+          <li>
+            <a href={site.url}>{site.title}</a>
+            {site.description && <p>{site.description}</p>}
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
 </BaseLayout>
+
+<style>
+  .gallery-header {
+    display: grid;
+    gap: 12px;
+  }
+
+  .gallery-header :global(img) {
+    display: block;
+    width: 100%;
+    max-height: 360px;
+    object-fit: cover;
+  }
+
+  .gallery-header h1,
+  .gallery-header p,
+  .related-sites p {
+    margin: 0;
+  }
+
+  .related-sites p {
+    margin-top: 2px;
+  }
+</style>

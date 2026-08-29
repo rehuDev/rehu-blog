@@ -1,18 +1,240 @@
 ---
+import type { CollectionEntry } from 'astro:content';
 import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
-const posts = await getCollection('post');
-const categories = [
-  ...new Set(posts.flatMap((post) => post.data.categories)),
-].sort((a, b) => a.localeCompare(b));
+const [galleryEntries, posts] = await Promise.all([
+  getCollection('gallery'),
+  getCollection('post'),
+]);
+
+const galleries = galleryEntries.sort((a, b) =>
+  a.data.title.localeCompare(b.data.title, 'ja'),
+);
+
+type GalleryStats = {
+  postCount: number;
+  latestPost: CollectionEntry<'post'>;
+};
+
+const galleryStats = new Map<string, GalleryStats>();
+
+for (const post of posts) {
+  for (const category of post.data.categories) {
+    const current = galleryStats.get(category.id);
+
+    if (!current) {
+      galleryStats.set(category.id, { postCount: 1, latestPost: post });
+      continue;
+    }
+
+    current.postCount += 1;
+    if (post.data.pubDate > current.latestPost.data.pubDate) {
+      current.latestPost = post;
+    }
+  }
+}
 ---
 
 <BaseLayout title="ギャラリー | rehu.blog">
-  <h1>ギャラリー</h1>
-  <ul>
-    {categories.map((category) => (
-      <li><a href={`/g/${category.toLowerCase()}/`}>{category}</a></li>
-    ))}
-  </ul>
+  <section class="gallery-list">
+    <header class="page-header">
+      <h1 class="visually-hidden">ギャラリー一覧</h1>
+      <p>各<span>ギャラリー</span>では、カテゴリー別に投稿をまとめて見ることができます。</p>
+    </header>
+
+    <hr class="separator"/>
+
+    <div class="gallery-grid">
+      {galleries.map((gallery, index) => {
+        const stats = galleryStats.get(gallery.id);
+        const postCount = stats?.postCount ?? 0;
+
+        return (
+          <a class="gallery-card" href={`/g/${gallery.id}/`}>
+            <div class="gallery-thumbnail">
+              <Image
+                src={gallery.data.thumbnail}
+                alt=""
+                loading={index === 0 ? 'eager' : 'lazy'}
+                widths={[90, 180, 350]}
+                sizes="(min-width: 425px) 175px, 90px"
+              />
+            </div>
+            <div class="gallery-card-body">
+              <div class="gallery-card-meta">
+                <h2>{gallery.data.title}</h2>
+                <span class="gallery-card-count">
+                  <span class="count-full">{postCount}件の投稿</span>
+                  <span class="count-short">[{postCount}]</span>
+                </span>
+              </div>
+              <p class="gallery-card-description">{gallery.data.description}</p>
+              <p class="gallery-card-latest">
+                最新：{stats?.latestPost.data.title ?? '投稿はまだありません'}
+              </p>
+            </div>
+          </a>
+        );
+      })}
+    </div>
+  </section>
 </BaseLayout>
+
+<style>
+  .gallery-list {
+    display: grid;
+    gap: 5px;
+  }
+
+  /* page header */
+  .page-header {
+    min-width: 0;
+  }
+  .page-header p {
+    margin: 0;
+    color: #333;
+    font-size: 14px;
+    font-weight: 700;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .page-header span {
+    color: var(--dc-blue-2);
+  }
+
+  .separator {
+    border: none;
+    height: 2px;
+    background-color: var(--dc-blue-2);
+    margin: 0 0 5px 0;
+  }
+
+  /* galleries */
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .gallery-card {
+    display: grid;
+    grid-template-columns: minmax(90px, 20%) minmax(0, 1fr);
+    gap: 0;
+    overflow: hidden;
+    color: inherit;
+    text-decoration: none;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+  }
+  .gallery-card:hover,
+  .gallery-card:focus-visible {
+    transform: translateY(-2px);
+    box-shadow:
+      0 10px 24px rgba(30, 45, 90, 0.12),
+      0 2px 8px rgba(30, 45, 90, 0.08);
+  }
+
+  .gallery-thumbnail {
+    position: relative;
+    align-self: start;
+    overflow: hidden;
+    height: 0;
+    padding-top: 75%;
+    background: linear-gradient(135deg, #eff3ff 0%, #f8fbff 100%);
+  }
+  .gallery-thumbnail :global(img) {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .gallery-card-body {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding: 0 8px;
+  }
+
+  .gallery-card-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    white-space: nowrap;
+  }
+  .gallery-card-meta h2 {
+    min-width: 0;
+    color: var(--dc-blue-2);
+    font-size: 1.1rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .gallery-card-count {
+    flex: none;
+    color: #667085;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+  .count-full {
+    display: none;
+  }
+
+  .gallery-card h2,
+  .gallery-card p {
+    margin: 0;
+  }
+
+  .gallery-card-body p {
+    margin-top: 4px;
+    color: #475467;
+    font-size: 14px;
+  }
+  .gallery-card-description {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+  }
+
+  .gallery-card-body .gallery-card-latest {
+    display: none;
+    margin-top: 5px;
+    color: #1f2937;
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  @media (min-width: 425px) {
+    .gallery-grid {
+      gap: 1.6rem;
+    }
+
+    .gallery-card {
+      grid-template-columns: minmax(175px, 15%) minmax(0, 1fr);
+    }
+    .gallery-thumbnail {
+      padding-top: 56.25%;
+    }
+
+    .count-full {
+      display: inline;
+    }
+    .count-short {
+      display: none;
+    }
+
+    .gallery-card-body .gallery-card-latest {
+      display: block;
+    }
+  }
+
+</style>

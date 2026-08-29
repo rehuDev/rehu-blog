@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import { getEntries } from 'astro:content';
 import BaseLayout from "./BaseLayout.astro";
 
 interface Props {
@@ -15,6 +16,8 @@ const {
   pubDate,
   updDate,
 } = post.data;
+
+const galleries = await getEntries(categories);
 
 const dateFormatter = new Intl.DateTimeFormat('ja-JP', {
   year: 'numeric',
@@ -36,8 +39,8 @@ const dateFormatter = new Intl.DateTimeFormat('ja-JP', {
   </p>
   <p><em>{description}</em></p>
   <ul>
-    {categories.map((category) => (
-      <li><a href={`/g/${category.toLowerCase()}/`}>{category} ギャラリー</a></li>
+    {galleries.map((gallery) => (
+      <li><a href={`/g/${gallery.id}/`}>{gallery.data.title} ギャラリー</a></li>
     ))}
   </ul>
   {image && <img src={image} width="300" alt="" />}
