@@ -1,7 +1,18 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const posts = await getCollection('post');
+const categories = [
+  ...new Set(posts.flatMap((post) => post.data.categories)),
+].sort((a, b) => a.localeCompare(b));
 ---
 
 <BaseLayout title="ギャラリー | rehu.blog">
   <h1>ギャラリー</h1>
+  <ul>
+    {categories.map((category) => (
+      <li><a href={`/g/${category.toLowerCase()}/`}>{category}</a></li>
+    ))}
+  </ul>
 </BaseLayout>

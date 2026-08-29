@@ -1,13 +1,45 @@
 ---
+import type { CollectionEntry } from 'astro:content';
 import BaseLayout from "./BaseLayout.astro";
-const { frontmatter } = Astro.props;
+
+interface Props {
+  post: CollectionEntry<'post'>;
+}
+
+const { post } = Astro.props;
+const {
+  title,
+  description,
+  image,
+  categories,
+  pubDate,
+  updDate,
+} = post.data;
+
+const dateFormatter = new Intl.DateTimeFormat('ja-JP', {
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+  timeZone: 'Asia/Tokyo',
+});
 ---
 
-<BaseLayout title={`${frontmatter.title} | rehu.blog`}>
-  <h1>{frontmatter.title}</h1>
-  <p>{frontmatter.pubDate.toString().slice(0,10)}</p>
-  <p><em>{frontmatter.description}</em></p>
-  <p>{frontmatter.categories} ギャラリー</p>
-  <img src={frontmatter.image} width="300" alt="thumbnail image" />
+<BaseLayout title={`${title} | rehu.blog`} description={description}>
+  <h1>{title}</h1>
+  <p>
+    公開：<time datetime={pubDate.toISOString()}>{dateFormatter.format(pubDate)}</time>
+    {updDate && (
+      <>
+        {' / '}更新：<time datetime={updDate.toISOString()}>{dateFormatter.format(updDate)}</time>
+      </>
+    )}
+  </p>
+  <p><em>{description}</em></p>
+  <ul>
+    {categories.map((category) => (
+      <li><a href={`/g/${category.toLowerCase()}/`}>{category} ギャラリー</a></li>
+    ))}
+  </ul>
+  {image && <img src={image} width="300" alt="" />}
   <slot />
 </BaseLayout>

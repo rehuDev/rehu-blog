@@ -1,5 +1,4 @@
 ---
-layout: ../../layouts/PostLayout.astro
 title: "ポスト・３"
 description: "テストポスト"
 image: ""

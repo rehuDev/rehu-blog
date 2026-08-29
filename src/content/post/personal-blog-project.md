@@ -1,5 +1,4 @@
 ---
-layout: ../../layouts/PostLayout.astro
 title: "ブログを作ってみよう"
 description: "自分だけの小さなブログを作る"
 image: ""
