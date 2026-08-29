@@ -5,7 +5,7 @@ image: ""
 pubDate: 2026-08-26T02:35
 updDate: 2026-08-28T21:05
 categories:
-  - "Dev"
+  - "dev"
 mcategories:
   - "Astro"
   - "ウェブ開発"
