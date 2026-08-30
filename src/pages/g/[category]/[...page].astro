@@ -145,12 +145,10 @@ const getPostImageSrc = (image?: string) => {
         <button class="gallery-post-toolbar-button" type="button" aria-pressed="true">画像</button>
       </div>
     </div>
-    {pagePosts.length > 0 && (
-      <div class="gallery-post-table-head" aria-hidden="true">
-        <span>投稿</span>
-        <span>公開日</span>
-      </div>
-    )}
+    <div class="gallery-post-table-head" aria-hidden="true">
+      <span>投稿</span>
+      <span>公開日</span>
+    </div>
     <div class="gallery-post-list">
       {pagePosts.map((post) => {
         const postHref = `/posts/${post.id}/`;
