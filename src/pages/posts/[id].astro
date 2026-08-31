@@ -1,0 +1,230 @@
+---
+import type { GetStaticPaths } from 'astro';
+import type { CollectionEntry } from 'astro:content';
+import { getCollection, render } from 'astro:content';
+import PostLayout from '../../layouts/PostLayout.astro';
+
+export const getStaticPaths = (async () => {
+  const posts = (await getCollection('post')).sort(
+    (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime(),
+  );
+
+  return posts.map((post, index) => ({
+    params: { id: post.id },
+    props: {
+      post,
+      olderPost: posts[index + 1],
+      newerPost: posts[index - 1],
+    },
+  }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  post: CollectionEntry<'post'>;
+  olderPost?: CollectionEntry<'post'>;
+  newerPost?: CollectionEntry<'post'>;
+}
+
+const { post, olderPost, newerPost } = Astro.props;
+const { Content } = await render(post);
+---
+
+<PostLayout post={post} olderPost={olderPost} newerPost={newerPost}>
+  <div class="post-body">
+    <Content />
+  </div>
+</PostLayout>
+
+<style>
+  .post-body {
+    width: 100%;
+    margin: 0;
+    color: #25283a;
+    font-size: 1rem;
+    line-height: 1.9;
+    overflow-wrap: anywhere;
+  }
+
+  .post-body :global(> :first-child) {
+    margin-top: 0;
+  }
+
+  .post-body :global(> :last-child) {
+    margin-bottom: 0;
+  }
+
+  .post-body :global(p) {
+    margin: 0 0 1.65em;
+  }
+
+  .post-body :global(h2),
+  .post-body :global(h3),
+  .post-body :global(h4) {
+    color: #202b63;
+    font-weight: var(--font-bold);
+    line-height: 1.45;
+    scroll-margin-top: 1.5rem;
+  }
+
+  .post-body :global(h2) {
+    margin: 2.8em 0 1em;
+    padding: 0.55rem 0 0.55rem 0.85rem;
+    border-left: 4px solid var(--dc-blue-3);
+    border-bottom: 1px solid #dfe2ee;
+    font-size: clamp(1.35rem, 3.8vw, 1.65rem);
+  }
+
+  .post-body :global(h3) {
+    margin: 2.25em 0 0.85em;
+    font-size: clamp(1.18rem, 3.3vw, 1.35rem);
+  }
+
+  .post-body :global(h4) {
+    margin: 2em 0 0.75em;
+    font-size: 1.05rem;
+  }
+
+  .post-body :global(a) {
+    color: #3153a4;
+    text-decoration-color: #9aabe0;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
+  }
+
+  .post-body :global(a:hover) {
+    color: var(--dc-blue-1);
+    text-decoration-thickness: 2px;
+  }
+
+  .post-body :global(a:focus-visible) {
+    border-radius: 2px;
+    outline: 2px solid var(--dc-blue-3);
+    outline-offset: 3px;
+  }
+
+  .post-body :global(strong) {
+    color: #171a29;
+  }
+
+  .post-body :global(ul),
+  .post-body :global(ol) {
+    margin: 0 0 1.65em;
+    padding-left: 1.6em;
+  }
+
+  .post-body :global(li + li) {
+    margin-top: 0.35em;
+  }
+
+  .post-body :global(blockquote) {
+    margin: 1.8em 0;
+    padding: 1rem 1.15rem;
+    border-left: 4px solid #7887bd;
+    background: #f4f5fa;
+    color: #4f546b;
+  }
+
+  .post-body :global(blockquote > :last-child) {
+    margin-bottom: 0;
+  }
+
+  .post-body :global(code) {
+    padding: 0.12em 0.35em;
+    border: 1px solid #dfe2ec;
+    border-radius: 3px;
+    background: #f5f6f9;
+    color: #b4234d;
+    font-size: 0.9em;
+  }
+
+  .post-body :global(pre) {
+    max-width: 100%;
+    margin: 1.8em 0;
+    padding: 1rem 1.1rem;
+    border: 1px solid #d9dce8;
+    border-radius: 4px;
+    background: #202432;
+    overflow-x: auto;
+    line-height: 1.65;
+  }
+
+  .post-body :global(pre code) {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font-size: 0.88rem;
+  }
+
+  .post-body :global(img) {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 2rem auto;
+    border-radius: 3px;
+  }
+
+  .post-body :global(figure) {
+    margin: 2rem 0;
+  }
+
+  .post-body :global(figure img) {
+    margin: 0 auto;
+  }
+
+  .post-body :global(figcaption) {
+    margin-top: 0.65rem;
+    color: #73778a;
+    font-size: 0.82rem;
+    line-height: 1.55;
+    text-align: center;
+  }
+
+  .post-body :global(table) {
+    width: 100%;
+    margin: 1.8em 0;
+    border-spacing: 0;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+
+  .post-body :global(th),
+  .post-body :global(td) {
+    padding: 0.65rem 0.75rem;
+    border: 1px solid #d9dce8;
+    text-align: left;
+    vertical-align: top;
+  }
+
+  .post-body :global(th) {
+    background: #eef0f7;
+    color: #202b63;
+  }
+
+  .post-body :global(hr) {
+    height: 1px;
+    margin: 3rem 0;
+    border: 0;
+    background: #dfe2ee;
+  }
+
+  .post-body :global(.footnotes) {
+    margin-top: 3.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid #dfe2ee;
+    color: #62677c;
+    font-size: 0.84rem;
+    line-height: 1.7;
+  }
+
+  @media (min-width: 768px) {
+    .post-body {
+      font-size: 1.0625rem;
+      line-height: 1.95;
+    }
+
+    .post-body :global(blockquote) {
+      padding: 1.2rem 1.4rem;
+    }
+  }
+</style>
