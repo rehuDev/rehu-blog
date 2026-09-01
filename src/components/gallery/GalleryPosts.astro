@@ -1,4 +1,5 @@
 ---
+import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 import missingPostImage from '../../assets/imgs/missing-image.avif';
 import { GALLERY_PAGE_GROUP_SIZE } from '../../lib/gallery';
@@ -40,15 +41,6 @@ const postDateFormatter = new Intl.DateTimeFormat('ja-JP', {
 
 const formatPostDate = (date: Date) => postDateFormatter.format(date).replaceAll('/', '.');
 
-const getPostImageSrc = (image?: string) => {
-  const src = image?.trim();
-
-  if (!src || /^[a-z][a-z\d+.-]*:/i.test(src) || src.startsWith('//') || src.startsWith('/')) {
-    return src;
-  }
-
-  return `/${src.replace(/^\.\//, '')}`;
-};
 ---
 
 <section class="gallery-posts" aria-label="投稿一覧">
@@ -70,16 +62,14 @@ const getPostImageSrc = (image?: string) => {
   <div class="gallery-post-list">
     {posts.map((post) => {
       const postHref = `/posts/${post.id}/?g=${encodeURIComponent(gallery.id)}`;
-      const postImage = getPostImageSrc(post.data.image);
+      const postImage = post.data.image ?? missingPostImage;
       const isCurrentPost = post.id === currentPostId;
 
       return (
         <article class:list={['gallery-post-item', { 'is-current': isCurrentPost }]}> 
           <a class="gallery-post-link" href={postHref} aria-current={isCurrentPost ? 'page' : undefined}>
             <span class="gallery-post-thumbnail" aria-hidden="true">
-              {postImage
-                ? <img src={postImage} alt="" loading="lazy" decoding="async" />
-                : <img src={missingPostImage.src} alt="" loading="lazy" decoding="async" />}
+              <Image src={postImage} alt="" loading="lazy" decoding="async" />
             </span>
             <div class="gallery-post-content">
               <div class="gallery-post-body">

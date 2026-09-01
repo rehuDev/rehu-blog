@@ -26,10 +26,10 @@ const post = defineCollection({
     pattern: '**/[^_]*.{md,mdx}',
     base: './src/content/post',
   }),
-  schema: z.object({
+  schema: ({ image }) => z.object({
     title: z.string(),
     description: z.string(),
-    image: z.string().optional(),
+    image: image().optional(),
     categories: z.array(reference('gallery')).min(1),
     mcategories: z.array(z.string()).optional(),
     pubDate: z.coerce.date(),

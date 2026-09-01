@@ -14,7 +14,6 @@ const { post, galleryContexts } = Astro.props;
 const {
   title,
   description,
-  image,
   mcategories,
   pubDate,
   updDate,
@@ -64,12 +63,6 @@ const dateFormatter = new Intl.DateTimeFormat('ja-JP', {
         )}
       </div>
     </header>
-
-    {image && (
-      <figure class="post-cover">
-        <img src={image} alt="" loading="eager" fetchpriority="high" />
-      </figure>
-    )}
 
     <div class="post-content">
       <slot />
@@ -134,7 +127,7 @@ const dateFormatter = new Intl.DateTimeFormat('ja-JP', {
 
 <style>
   .post-shell {
-    padding: 0.5rem 0 3.5rem;
+    padding: 0;
   }
 
   .post-header {
@@ -167,7 +160,7 @@ const dateFormatter = new Intl.DateTimeFormat('ja-JP', {
     display: flex;
     flex-wrap: wrap;
     gap: 0.45rem 1rem;
-    margin-top: 1.35rem;
+    margin-top: 0.5rem;
     color: #777b8c;
     font-size: 0.78rem;
     font-variant-numeric: tabular-nums;
@@ -190,22 +183,8 @@ const dateFormatter = new Intl.DateTimeFormat('ja-JP', {
     font-weight: var(--font-medium);
   }
 
-  .post-cover {
-    width: 100%;
-    margin: 2rem 0 0;
-  }
-
-  .post-cover img {
-    display: block;
-    width: 100%;
-    height: auto;
-    max-height: 520px;
-    border-radius: 3px;
-    object-fit: cover;
-  }
-
   .post-content {
-    margin-top: 2.25rem;
+    margin-top: 1.6rem;
   }
 
   .post-footer {
@@ -253,22 +232,13 @@ const dateFormatter = new Intl.DateTimeFormat('ja-JP', {
   }
 
   @media (min-width: 768px) {
-    .post-shell {
-      padding-top: 1.2rem;
-      padding-bottom: 4.5rem;
-    }
-
     .post-header {
       padding-top: 1.75rem;
       padding-bottom: 2rem;
     }
 
-    .post-cover {
-      margin-top: 2.5rem;
-    }
-
     .post-content {
-      margin-top: 3rem;
+      margin-top: 2rem;
     }
 
     .post-footer {
