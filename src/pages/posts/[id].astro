@@ -3,33 +3,68 @@ import type { GetStaticPaths } from 'astro';
 import type { CollectionEntry } from 'astro:content';
 import { getCollection, render } from 'astro:content';
 import PostLayout from '../../layouts/PostLayout.astro';
+import {
+  GALLERY_POSTS_PER_PAGE,
+  type GalleryPostContext,
+} from '../../lib/gallery';
 
 export const getStaticPaths = (async () => {
-  const posts = (await getCollection('post')).sort(
+  const [posts, galleries] = await Promise.all([
+    getCollection('post'),
+    getCollection('gallery'),
+  ]);
+
+  posts.sort(
     (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime(),
   );
 
-  return posts.map((post, index) => ({
-    params: { id: post.id },
-    props: {
-      post,
-      olderPost: posts[index + 1],
-      newerPost: posts[index - 1],
-    },
-  }));
+  const galleryById = new Map(galleries.map((gallery) => [gallery.id, gallery]));
+  const postsByGallery = new Map<string, CollectionEntry<'post'>[]>();
+
+  for (const post of posts) {
+    for (const category of post.data.categories) {
+      const galleryPosts = postsByGallery.get(category.id) ?? [];
+      galleryPosts.push(post);
+      postsByGallery.set(category.id, galleryPosts);
+    }
+  }
+
+  return posts.map((post) => {
+    const galleryContexts = post.data.categories.flatMap<GalleryPostContext>((category) => {
+      const gallery = galleryById.get(category.id);
+      if (!gallery) return [];
+
+      const galleryPosts = postsByGallery.get(category.id) ?? [];
+      const postIndex = Math.max(0, galleryPosts.findIndex((entry) => entry.id === post.id));
+      const currentPage = Math.floor(postIndex / GALLERY_POSTS_PER_PAGE) + 1;
+      const pageStart = (currentPage - 1) * GALLERY_POSTS_PER_PAGE;
+
+      return [{
+        gallery,
+        pagePosts: galleryPosts.slice(pageStart, pageStart + GALLERY_POSTS_PER_PAGE),
+        postCount: galleryPosts.length,
+        currentPage,
+        totalPages: Math.max(1, Math.ceil(galleryPosts.length / GALLERY_POSTS_PER_PAGE)),
+      }];
+    });
+
+    return {
+      params: { id: post.id },
+      props: { post, galleryContexts },
+    };
+  });
 }) satisfies GetStaticPaths;
 
 interface Props {
   post: CollectionEntry<'post'>;
-  olderPost?: CollectionEntry<'post'>;
-  newerPost?: CollectionEntry<'post'>;
+  galleryContexts: GalleryPostContext[];
 }
 
-const { post, olderPost, newerPost } = Astro.props;
+const { post, galleryContexts } = Astro.props;
 const { Content } = await render(post);
 ---
 
-<PostLayout post={post} olderPost={olderPost} newerPost={newerPost}>
+<PostLayout post={post} galleryContexts={galleryContexts}>
   <div class="post-body">
     <Content />
   </div>

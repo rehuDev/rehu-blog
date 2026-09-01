@@ -1,7 +1,7 @@
 ---
 title: "ブログを作ってみよう"
 description: "自分だけの小さなブログを作る"
-image: ""
+image: "../../assets/imgs/chip log.avif"
 pubDate: 2026-08-26T02:35
 updDate: 2026-08-28T21:05
 categories:

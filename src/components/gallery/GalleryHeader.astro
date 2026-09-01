@@ -1,0 +1,354 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  gallery: CollectionEntry<'gallery'>;
+  postCount: number;
+}
+
+const { gallery, postCount } = Astro.props;
+const { title, relatedSites } = gallery.data;
+const dialogId = `related-sites-dialog-${gallery.id}`;
+---
+
+<div class="gallery-header-component" data-gallery-header-root>
+  <header class="gallery-header">
+    <h1>
+      <a href={`/g/${gallery.id}/`}>{title}<span> ギャラリー</span></a>
+      <small>({postCount}件)</small>
+    </h1>
+    <div class="gallery-header-action">
+      <button type="button" aria-label="ギャラリー情報">
+        <span class="action-label-short" aria-hidden="true">ⓘ</span>
+        <span class="action-label-long" aria-hidden="true">ギャラリー情報</span>
+      </button>
+      {relatedSites.length > 0 && (
+        <button
+          type="button"
+          aria-label="関連サイト"
+          aria-haspopup="dialog"
+          aria-controls={dialogId}
+          aria-expanded="false"
+          data-related-sites-open
+        >
+          <span class="action-label-short" aria-hidden="true">関連</span>
+          <span class="action-label-long" aria-hidden="true">関連サイト</span>
+        </button>
+      )}
+      <button type="button">案内</button>
+    </div>
+  </header>
+
+  {relatedSites.length > 0 && (
+    <dialog
+      id={dialogId}
+      class="related-sites-dialog"
+      aria-labelledby={`${dialogId}-title`}
+      aria-describedby={`${dialogId}-description`}
+      data-related-sites-dialog
+    >
+      <div class="related-sites-panel">
+        <header class="related-sites-header">
+          <div>
+            <span>{title} ギャラリー</span>
+            <h2 id={`${dialogId}-title`}>関連サイト</h2>
+            <p id={`${dialogId}-description`}>このギャラリーに関連するサイトです。</p>
+          </div>
+          <form method="dialog">
+            <button class="related-sites-close" value="close" aria-label="閉じる">×</button>
+          </form>
+        </header>
+
+        <ul class="related-sites-list">
+          {relatedSites.map((site) => (
+            <li>
+              <a href={site.url} target="_blank" rel="noopener noreferrer">
+                <span class="related-site-title">
+                  {site.title}
+                  <span aria-hidden="true">↗</span>
+                </span>
+                {site.description && <span class="related-site-description">{site.description}</span>}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </dialog>
+  )}
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-gallery-header-root]').forEach((root) => {
+    const dialog = root.querySelector<HTMLDialogElement>('[data-related-sites-dialog]');
+    const openButton = root.querySelector<HTMLButtonElement>('[data-related-sites-open]');
+
+    openButton?.addEventListener('click', () => {
+      dialog?.showModal();
+      openButton.setAttribute('aria-expanded', 'true');
+    });
+
+    dialog?.addEventListener('close', () => {
+      openButton?.setAttribute('aria-expanded', 'false');
+    });
+
+    dialog?.addEventListener('click', (event) => {
+      if (event.target === dialog) dialog.close();
+    });
+  });
+</script>
+
+<style>
+  .gallery-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 8px;
+    min-width: 0;
+    border-bottom: 2px solid var(--dc-blue-2);
+  }
+
+  .gallery-header h1 {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: baseline;
+    gap: 6px;
+    min-width: 0;
+    margin: 0;
+    font-size: 24px;
+    line-height: 1.35;
+  }
+
+  .gallery-header h1 a {
+    display: block;
+    flex: 0 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    color: var(--dc-blue-2);
+    text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .gallery-header h1 small {
+    flex: 0 0 auto;
+    color: #98a2b3;
+    font-size: 12px;
+    font-weight: 400;
+  }
+
+  .gallery-header h1 a:hover,
+  .gallery-header h1 a:focus-visible {
+    color: var(--dc-blue-3);
+    outline: none;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .gallery-header h1 span {
+    display: none;
+  }
+
+  .gallery-header-action {
+    display: flex;
+    position: relative;
+    flex: 0 0 auto;
+    align-self: flex-end;
+    align-items: flex-end;
+    height: 100%;
+  }
+
+  .gallery-header-action button {
+    display: inline-flex;
+    position: relative;
+    align-items: center;
+    padding: 1px;
+    border: 0;
+    background-color: transparent;
+    color: #475467;
+    font-size: 12px;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+
+  .gallery-header-action button:hover,
+  .gallery-header-action button:focus-visible {
+    border-color: var(--dc-blue-2);
+    background: #f1f4ff;
+    color: var(--dc-blue-2);
+    outline: none;
+  }
+
+  .gallery-header-action button + button {
+    margin-left: 9px;
+  }
+
+  .gallery-header-action button + button::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: -5px;
+    width: 1px;
+    height: 10px;
+    background-color: #ccc;
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+
+  .gallery-header-action .action-label-long {
+    display: none;
+  }
+
+  .related-sites-dialog {
+    width: min(calc(100% - 32px), 560px);
+    max-width: none;
+    max-height: calc(100dvh - 48px);
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid #cfd6e4;
+    border-radius: 12px;
+    background: #fff;
+    color: #1f2937;
+    box-shadow: 0 20px 60px rgba(15, 23, 42, 0.26);
+  }
+
+  .related-sites-dialog::backdrop {
+    background: rgba(15, 23, 42, 0.48);
+    backdrop-filter: blur(2px);
+  }
+
+  .related-sites-panel {
+    display: grid;
+    max-height: calc(100dvh - 48px);
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  .related-sites-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 18px 14px;
+    border-bottom: 1px solid #e1e6ef;
+    background: #f7f9ff;
+  }
+
+  .related-sites-header > div > span {
+    display: block;
+    margin-bottom: 2px;
+    color: #667085;
+    font-size: 11px;
+  }
+
+  .related-sites-header h2 {
+    margin: 0;
+    color: var(--dc-blue-2);
+    font-size: 20px;
+    line-height: 1.35;
+  }
+
+  .related-sites-header p {
+    margin: 4px 0 0;
+    color: #667085;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .related-sites-header form {
+    flex: 0 0 auto;
+  }
+
+  .related-sites-close {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: 50%;
+    background: transparent;
+    color: #667085;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .related-sites-close:hover,
+  .related-sites-close:focus-visible {
+    border-color: #d5dbea;
+    background: #fff;
+    color: var(--dc-blue-2);
+    outline: none;
+  }
+
+  .related-sites-list {
+    display: grid;
+    gap: 10px;
+    margin: 0;
+    padding: 14px;
+    overflow-y: auto;
+    list-style: none;
+  }
+
+  .related-sites-list a {
+    display: block;
+    padding: 12px 14px;
+    border: 1px solid #e0e5ee;
+    border-radius: 8px;
+    background: #fff;
+    color: inherit;
+    text-decoration: none;
+    transition: border-color 120ms ease, background-color 120ms ease;
+  }
+
+  .related-sites-list a:hover,
+  .related-sites-list a:focus-visible {
+    border-color: #aeb9db;
+    background: #f7f9ff;
+    outline: none;
+  }
+
+  .related-site-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    color: var(--dc-blue-2);
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .related-site-title > span {
+    flex: 0 0 auto;
+    color: #98a2b3;
+    font-size: 12px;
+  }
+
+  .related-site-description {
+    display: block;
+    margin-top: 4px;
+    color: #667085;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  @media (min-width: 425px) {
+    .gallery-header h1 span {
+      display: inline;
+    }
+  }
+
+  @media (min-width: 640px) {
+    .gallery-header h1,
+    .gallery-header-action {
+      margin-bottom: 3px;
+    }
+
+    .gallery-header-action .action-label-long {
+      display: inline;
+    }
+
+    .gallery-header-action .action-label-short {
+      display: none;
+    }
+  }
+</style>
