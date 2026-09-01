@@ -1,1 +1,385 @@
-Sidebar
+---
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import missingPostImage from '../assets/imgs/missing-image.avif';
+import Social from "./Social.astro";
+
+const RECENT_POSTS_PER_PAGE = 7;
+const RECENT_POSTS_MAX_PAGES = 4;
+const [postEntries, galleryEntries] = await Promise.all([
+  getCollection('post'),
+  getCollection('gallery'),
+]);
+
+const recentPosts = postEntries
+  .sort((a, b) => (
+    b.data.pubDate.getTime() - a.data.pubDate.getTime()
+    || a.id.localeCompare(b.id)
+  ))
+  .slice(0, RECENT_POSTS_PER_PAGE * RECENT_POSTS_MAX_PAGES);
+
+const galleries = galleryEntries.sort((a, b) =>
+  a.data.title.localeCompare(b.data.title, 'ja'),
+);
+
+const recentPostPages = Array.from(
+  { length: Math.ceil(recentPosts.length / RECENT_POSTS_PER_PAGE) },
+  (_, index) => recentPosts.slice(
+    index * RECENT_POSTS_PER_PAGE,
+    (index + 1) * RECENT_POSTS_PER_PAGE,
+  ),
+);
+---
+
+<div class="sidebar-about">
+  <div class="info">
+    <a class="info-name" href="/about/">
+      <span><strong>レフ</strong>ちゃん</span>
+      <img src="/galler-con.gif" alt="" width="12" height="11" />
+      <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" stroke="currentColor" stroke-width="2" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708" /></svg>
+    </a>
+    <a class="info-btn" href="/about/">紹介</a>
+  </div>
+  <div class="social">
+    <Social />
+  </div>
+</div>
+
+<section class="sidebar-item sidebar-recent" aria-labelledby="recent-posts-title" data-recent-posts>
+  <div class="sidebar-item-header">
+    <h2 id="recent-posts-title"><a href="/all/">最近の投稿</a></h2>
+  </div>
+  <div class="sidebar-item-recent">
+    {recentPostPages.map((posts, pageIndex) => {
+      const imagePosts = posts.slice(0, 2);
+      const listPosts = posts.slice(2);
+
+      return (
+        <div
+          class="recent-page"
+          data-recent-page={pageIndex + 1}
+          hidden={pageIndex !== 0}
+        >
+          <div class="recent-image-posts">
+            {imagePosts.map((post) => (
+              <a class="recent-image-card" href={`/posts/${post.id}/`}>
+                <span class="recent-image-wrapper" aria-hidden="true">
+                  <Image
+                    src={post.data.image ?? missingPostImage}
+                    alt=""
+                    width={260}
+                    height={146}
+                    fit="cover"
+                    loading="lazy"
+                  />
+                </span>
+                <h3>{post.data.title}</h3>
+              </a>
+            ))}
+          </div>
+
+          {listPosts.length > 0 && (
+            <ul class="sidebar-link-list recent-list-posts">
+              {listPosts.map((post) => (
+                <li><a href={`/posts/${post.id}/`}>{post.data.title}</a></li>
+              ))}
+            </ul>
+          )}
+        </div>
+      );
+    })}
+
+    {recentPostPages.length === 0 && (
+      <p class="recent-posts-empty">まだ投稿はありません。</p>
+    )}
+  </div>
+
+  {recentPostPages.length > 1 && (
+    <div class="recent-pagination" aria-label="最近の投稿ページ">
+      <button type="button" data-recent-previous disabled>前へ</button>
+      <span aria-live="polite">
+        <span data-recent-current>1</span> / {recentPostPages.length}
+      </span>
+      <button type="button" data-recent-next>次へ</button>
+    </div>
+  )}
+</section>
+
+<section class="sidebar-item sidebar-galleries" aria-labelledby="gallery-list-title">
+  <div class="sidebar-item-header">
+    <h2 id="gallery-list-title"><a href="/g/">ギャラリーリスト</a></h2>
+  </div>
+  <ul class="sidebar-link-list gallery-list">
+    {galleries.map((gallery) => (
+      <li><a href={`/g/${gallery.id}/`}>{gallery.data.title}</a></li>
+    ))}
+  </ul>
+</section>
+
+<div class="sidebar-item">
+  名言
+</div>
+
+<div class="sticky-container">
+  広告 test
+</div>
+
+<div class="sidebar-item">
+  ニュース widget
+</div>
+
+<style>
+  .sidebar-about {
+    margin-bottom: .75rem;
+    border: 1px solid var(--dc-blue-2);
+  }
+
+  .info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1rem;
+    min-height: 43px;
+  }
+
+  .info-name {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    color: var(--dc-blue-2);
+    text-decoration: none;
+  }
+  .info-name:hover {
+    color: var(--dc-blue-1);
+  }
+  .info-name img {
+    margin-left: 2px;
+    margin-bottom: 3px;
+    align-self: flex-end;
+  }
+  .info-name svg path {
+    stroke: currentColor;
+    stroke-width: 2px;
+  }
+  .info-btn {
+    padding: 0 6px;
+    border: 1px solid var(--dc-blue-2);
+    background-color: var(--dc-blue-3);
+    color: #fff;
+    text-shadow: 0px 1px var(--dc-blue-1);
+    text-decoration: none;
+  }
+  .info-btn:hover {
+    background-color: var(--dc-blue-2);
+  }
+  .info-name:focus-visible,
+  .info-btn:focus-visible,
+  .sidebar-item-header a:focus-visible,
+  .recent-image-card:focus-visible,
+  .sidebar-link-list a:focus-visible,
+  .recent-pagination button:focus-visible {
+    border-radius: 2px;
+    outline: 2px solid var(--dc-blue-3);
+    outline-offset: 2px;
+  }
+  .social {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 1rem;
+    min-height: 36px;
+    background-color: #f3f3f3;
+  }
+
+  .sidebar-item {
+    padding: 0 1rem;
+    margin-bottom: .75rem;
+    border: 1px solid #ccc;
+  }
+  .sidebar-item-header {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    padding-left: 2px;
+    border-bottom: 1px dashed #aaa;
+  }
+  .sidebar-item-header a {
+    color: #333;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .sidebar-item-header h2 {
+    margin: 0;
+    font: inherit;
+  }
+  .sidebar-item-header a:hover {
+    color: var(--dc-blue-2);
+  }
+
+  /* recent posts */
+  .recent-page[hidden] {
+    display: none;
+  }
+
+  .recent-image-posts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: .5rem;
+    margin-top: .75rem;
+  }
+
+  .recent-image-card {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: .4rem;
+    color: #333;
+    text-decoration: none;
+  }
+
+  .recent-image-card:only-child {
+    grid-column: 1 / -1;
+  }
+
+  .recent-image-wrapper {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border: 1px solid #e1e3e8;
+    background: #eef1f6;
+  }
+
+  .recent-image-wrapper :global(img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 160ms ease;
+  }
+
+  .recent-image-card:hover .recent-image-wrapper :global(img) {
+    transform: scale(1.025);
+  }
+
+  .recent-image-card h3 {
+    display: -webkit-box;
+    margin: 0;
+    overflow: hidden;
+    color: inherit;
+    font-size: .78rem;
+    font-weight: var(--font-medium);
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+  }
+
+  .recent-image-card:hover h3 {
+    color: var(--dc-blue-2);
+    text-decoration: underline;
+    text-underline-offset: .15em;
+  }
+
+  .sidebar-link-list {
+    margin: .5rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .sidebar-link-list a {
+    display: block;
+    overflow: hidden;
+    padding: 0;
+    color: #333;
+    font-size: .78rem;
+    line-height: 1.6;
+    text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .sidebar-link-list a:hover {
+    color: var(--dc-blue-2);
+    text-decoration: underline;
+    text-underline-offset: .15em;
+  }
+
+  /* gallery list */
+  .gallery-list {
+    margin-bottom: .65rem;
+  }
+
+  .recent-posts-empty {
+    margin: .75rem 0;
+    color: #777;
+    font-size: .78rem;
+  }
+
+  .recent-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .6rem;
+    margin: .65rem 0 .75rem;
+    color: #666;
+    font-size: .72rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .recent-pagination button {
+    min-height: 28px;
+    padding: 2px 8px;
+    border: 1px solid #c7c7c7;
+    background: #f8f8f8;
+    color: #333;
+    cursor: pointer;
+  }
+
+  .recent-pagination button:hover:not(:disabled) {
+    border-color: var(--dc-blue-3);
+    color: var(--dc-blue-2);
+  }
+
+  .recent-pagination button:disabled {
+    color: #aaa;
+    cursor: default;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .recent-image-wrapper :global(img) {
+      transition: none;
+    }
+  }
+
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-recent-posts]').forEach((root) => {
+    const pages = [...root.querySelectorAll<HTMLElement>('[data-recent-page]')];
+    const previousButton = root.querySelector<HTMLButtonElement>('[data-recent-previous]');
+    const nextButton = root.querySelector<HTMLButtonElement>('[data-recent-next]');
+    const currentPageLabel = root.querySelector<HTMLElement>('[data-recent-current]');
+
+    if (pages.length < 2 || !previousButton || !nextButton || !currentPageLabel) return;
+
+    let currentPage = 0;
+
+    const showPage = (page: number) => {
+      currentPage = Math.min(Math.max(page, 0), pages.length - 1);
+
+      pages.forEach((pageElement, index) => {
+        pageElement.hidden = index !== currentPage;
+      });
+
+      previousButton.disabled = currentPage === 0;
+      nextButton.disabled = currentPage === pages.length - 1;
+      currentPageLabel.textContent = String(currentPage + 1);
+    };
+
+    previousButton.addEventListener('click', () => showPage(currentPage - 1));
+    nextButton.addEventListener('click', () => showPage(currentPage + 1));
+  });
+</script>
